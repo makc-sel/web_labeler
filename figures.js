@@ -1,25 +1,8 @@
-class Point {
-    constructor(x, y, r) {
-        this.x = x;
-        this.y = y;
-        this.r = r;
-    }
-    pointInCircle(x, y) {
-        retrun(x - this.x) ** 2 + (y - this.y) ** 2 < this.r ** 2
-    }
-};
-
-class Line {
-    constructor(point1, point2) {
-        this.point1 = point1;
-        this.point2 = point2;
-    };
-}
-
 class Rectangle {
     constructor(gl, x1, y1, x2, y2, shaderProgramRect, shaderProgramPoint, color) {
-        this.distToVertex = 10; // изменение при зуме
+        this.distToVertex = 10;
         this.isSelected = false;
+        this.dragTL = this.dragTR = this.dragBL = this.dragBR = false;
 
         this.updatePos(x1, y1, x2, y2);
         this.updateRectPos();
@@ -48,31 +31,36 @@ class Rectangle {
 
         this.updateBufferInfo(gl)
     };
-    drag(mouseX, mouseY) {
 
-    }
-    dragTL(mouseX, mouseY) {
-        this.w += this.x - mouseX;
-        this.h += this.y - mouseY;
-        this.x = mouseX;
-        this.y = mouseY;
+    dragRect(offsetX, offsetY) {
+        this.x += offsetX;
+        this.y += offsetY;
+        this.updateRectPos();
+        this.updateBufferInfo(gl);
     };
 
-    dragTR(mouseX, mouseY) {
-        this.w = Math.abs(this.x - mouseX);
-        this.h += this.y - mouseY;
-        this.y = mouseY;
-    };
-
-    dragBL(mouseX, mouseY) {
-        this.w += this.x - mouseX;
-        this.h = Math.abs(this.y - mouseY);
-        this.x = mouseX;
-    };
-
-    dragBR(mouseX, mouseY) {
-        this.w = Math.abs(this.x - mouseX);
-        this.h = Math.abs(this.y - mouseY);
+    dragVertex(mouseX, mouseY) {
+        if (this.dragTL) {
+            this.w += this.x - mouseX;
+            this.h += this.y - mouseY;
+            this.x = mouseX;
+            this.y = mouseY;
+        } else if (this.dragTR) {
+            this.w = Math.abs(this.x - mouseX);
+            this.h += this.y - mouseY;
+            this.y = mouseY;
+        } else if (this.dragBL) {
+            this.w += this.x - mouseX;
+            this.h = Math.abs(this.y - mouseY);
+            this.x = mouseX;
+        } else if (this.dragBR) {
+            this.w = Math.abs(this.x - mouseX);
+            this.h = Math.abs(this.y - mouseY);
+        };
+        if (this.dragTL || this.dragTR || this.dragBL || this.dragBR) {
+            this.updateRectPos();
+            this.updateBufferInfo(gl);
+        };
     };
 
     updatePos(x1, y1, x2, y2) {
@@ -94,13 +82,20 @@ class Rectangle {
     };
 
     updateRectPos() {
+        if (this.w < 0) {
+            this.x = this.x + this.w;
+            this.w = -this.w;
+        } else if (this.h < 0) {
+            this.y = this.y + this.h;
+            this.h = -this.h;
+        }
         this.rectPos = [
             this.x, this.y, // top-left
             this.x + this.w, this.y, // top-right
             this.x, this.y + this.h, // bottom-left
             this.x + this.w, this.y + this.h  // bottom-right
         ];
-    }
+    };
 
     updateBufferInfo(gl) {
         this.bufferInfo = twgl.createBufferInfoFromArrays(gl, {
@@ -129,33 +124,39 @@ class Rectangle {
         let elementToChange = document.getElementsByTagName("body")[0];
         // top left
         if (Math.abs(x - this.x) < this.distToVertex / camera.zoom && Math.abs(y - this.y) < this.distToVertex / camera.zoom) {
+            this.dragTL = true;
             elementToChange.style.cursor = "nw-resize";
-            console.log('top left');
+            return true;
         }
         // top right 
         else if (Math.abs(x - this.x - this.w) < this.distToVertex / camera.zoom && Math.abs(y - this.y) < this.distToVertex / camera.zoom) {
+            this.dragTR = true;
             elementToChange.style.cursor = "ne-resize";
-            console.log('top right');
+            return true;
         }
         // bottom left 
         else if (Math.abs(x - this.x) < this.distToVertex / camera.zoom && Math.abs(y - this.y - this.h) < this.distToVertex / camera.zoom) {
+            this.dragBL = true;
             elementToChange.style.cursor = "sw-resize";
-            console.log('bottom left');
+            return true;
         }
         // bottom right 
         else if (Math.abs(x - this.x - this.w) < this.distToVertex / camera.zoom && Math.abs(y - this.y - this.h) < this.distToVertex / camera.zoom) {
+            this.dragBR = true;
             elementToChange.style.cursor = "se-resize";
-            console.log('bottom right');
+            return true;
         }
         // no hover
         else {
-
+            this.dragTL = this.dragTR = this.dragBL = this.dragBR = false;
             elementToChange.style.cursor = "default";
+            return false;
         }
-    }
+    };
 
     pointInRect(x, y) {
-        if (x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.h) {
+        if (x > this.x - this.distToVertex / camera.zoom && x < this.x + this.w + this.distToVertex / camera.zoom &&
+            y > this.y - this.distToVertex / camera.zoom && y < this.y + this.h + this.distToVertex / camera.zoom) {
             this.isSelected = true;
             return true
         } else {

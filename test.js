@@ -1,17 +1,15 @@
-const x_pos_label = document.getElementById("x_pos");
-const y_pos_label = document.getElementById("y_pos");
-
-const canvas = document.getElementById("canvas");
-const gl = canvas.getContext("webgl2");
-
-const table = document.getElementById("labels");
-
-const selector_btn = document.getElementById("selector"),
+const
+    canvas = document.getElementById("canvas"),
+    gl = canvas.getContext("webgl2"),
+    x_pos_label = document.getElementById("x_pos"),
+    y_pos_label = document.getElementById("y_pos"),
+    table = document.getElementById("labels"),
+    selector_btn = document.getElementById("selector"),
     edit_btn = document.getElementById("edit"),
     drawRect_btn = document.getElementById("drawRect");
 
-canvas.width = 1920;
-canvas.height = 1080;
+canvas.width = 1280;
+canvas.height = 720;
 
 const MOUSE_STATES = {
     "selector": 0,
@@ -56,12 +54,13 @@ var camera = {
 //переделать на dict
 var CLASSES = {};
 
-const modal = document.getElementById("myModal");
-const color = document.getElementById("color_input");
-const class_selector = document.getElementById("class_selector");
-const class_name = document.getElementById("class_name");
-const apply_label_button = document.getElementById("apply_label_button");
-const discard_label_button = document.getElementById("discard_label_button");
+const
+    modal = document.getElementById("myModal"),
+    color = document.getElementById("color_input"),
+    class_selector = document.getElementById("class_selector"),
+    class_name = document.getElementById("class_name"),
+    apply_label_button = document.getElementById("apply_label_button"),
+    discard_label_button = document.getElementById("discard_label_button");
 
 apply_label_button.addEventListener("click", function (e) {
     // Если индекс селектора 0 значит класс не выбран и мы должны его создать

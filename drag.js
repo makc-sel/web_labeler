@@ -11,7 +11,14 @@ class Manipulator {
         this.isDrawing = false;
         this.mousePos = [0, 0];
         this.isSelected = false;
+
+        this.isDragRectVertex = false;
+        this.isDragRect = false;
+        this.inRect = false;
+        this.inRectVertex = false;
+        this.startDragRect = [];
         this.selectedRectID = undefined;
+
         this.gl = gl;
         this.viewProjectionMat = updateViewProjection(gl, camera);
         this.startPoint = [];
@@ -50,13 +57,11 @@ class Manipulator {
                 ));
             }
             else if (e.button == 0 && mouse_state == MOUSE_STATES["edit"]) {
-                for (let i = 0; i < bboxes.length; i++) {
-                    if (bboxes[i].pointInRect(this.mousePos[0], this.mousePos[1])) {
-                        ok = true;
-                        this.isSelected = true;
-                        this.selectedRectID = i;
-                        break;
-                    }
+                if (this.inRectVertex) {
+                    this.isDragRectVertex = true;
+                } else if (this.inRect) {
+                    this.isDragRect = true;
+                    this.startDragRect = this.mousePos;
                 }
             }
         };
@@ -87,29 +92,53 @@ class Manipulator {
                 this.endPoint[1]
             );
         }
-        else if (this.isSelected) {
-            bboxes[this.selectedRectID].pointInVertex(this.mousePos[0], this.mousePos[1]);
+        else if (mouse_state == MOUSE_STATES["edit"]) {
+            if (this.isDragRect) {
+                let offsetX = this.mousePos[0] - this.startDragRect[0];
+                let offsetY = this.mousePos[1] - this.startDragRect[1];
+                bboxes[this.selectedRectID].dragRect(offsetX, offsetY);
+                this.startDragRect = this.mousePos;
+            } else if (this.isDragRectVertex) {
+                bboxes[this.selectedRectID].dragVertex(this.mousePos[0], this.mousePos[1]);
+            } else {
+                for (let i = bboxes.length - 1; i >= 0; i--) { // баг при движении через линию
+                    if (bboxes[i].pointInRect(this.mousePos[0], this.mousePos[1])) {
+                        this.selectedRectID = i;
+                        if (bboxes[i].pointInVertex(this.mousePos[0], this.mousePos[1])) {
+                            this.inRectVertex = true;
+                        } else {
+                            this.inRect = true;
+                        };
+                        break;
+                    } else {
+                        this.inRect = false;
+                        this.inRectVertex = false;
+                    }
+                }
+            }
+
+
         }
     };
 
     mouse_up(e) {
-        // Остановка движения камеры
         if (this.isPanning) {
             this.isPanning = false;
-        }
-        // Остановка рисования прямоугольника
-        else if (this.isDrawing) {
+        } else if (this.isDrawing) {
             this.isDrawing = false;
-            // Открываем окно выбора класса
             modal.style.display = "block";
-        }
+        } else if (this.isDragRect) {
+            this.isDragRect = false;
+        } else if (this.isDragRectVertex) {
+            this.isDragRectVertex = false;
+        };
     };
 
     mouse_leave(e) {
         // move camera
         if (this.isPanning) {
             this.isPanning = false;
-        }
+        };
     };
 
     mouse_wheel(e, camera) {
