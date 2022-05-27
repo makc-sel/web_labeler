@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #content {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #canvas {
+            border: 1px solid black;
+            width: 80%;
+        }
+
+        #volumes {
+            border: 1px solid black;
+            display: block;
+        }
+
+        #volumes button {
+            margin: 10px;
+        }
+
+        #labels {
+            border: 1px solid black;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #labels tr {
+            border: 1px solid black;
+        }
+
+        #labels td {
+            border: 1px solid gray;
+        }
+
+        #labels th {
+            border: 1px solid #000000;
+            /* text-align: left; */
+            /* padding: 8px; */
+        }
+
+        /* The Modal (background) */
+        .modal {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Stay in place */
+            z-index: 1;
+            /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            /* Full width */
+            height: 100%;
+            /* Full height */
+            overflow: auto;
+            /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0);
+            /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4);
+            /* Black w/ opacity */
+        }
+
+        /* Modal Content/Box */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            /* Could be more or less, depending on screen size */
+        }
+    </style>
+    <title>Labeler</title>
+</head>
+
+<body>
+    <!-- Модальное окно -->
+    <div id="myModal" class="modal">
+        <!-- Контент модального окна -->
+        <div class="modal-content">
+            <div>
+                <label>Выберете существующий класс</label>
+                <select id="class_selector">
+                    <option value=0 selected="selected">None</option>
+                </select>
+            </div>
+            <div>
+                <label>Введите название класса</label>
+                <input id="class_name" type="text">
+                <label>Выберете цвет для класса</label>
+                <input id="color_input" type="color">
+            </div>
+            <input id="apply_label_button" type="button" value="Применить">
+            <input id="discard_label_button" type="button" value="Отменить">
+        </div>
+    </div>
+    <div id="content">
+        <div id="volumes">
+            <button id="selector">Selector</button>
+            <button id="edit">Edit</button>
+            <button id="drawRect">Draw Rect</button>
+        </div>
+        <canvas id="canvas" tabindex='1'></canvas>
+        <table id="labels">
+            <tr>
+                <th>label</th>
+                <th>x1</th>
+                <th>y1</th>
+                <th>w</th>
+                <th>h</th>
+                <th>color</th>
+            </tr>
+        </table>
+    </div>
+    <div>
+        <label id="x_pos"></label>
+        <label id="y_pos"></label>
+    </div>
+    <script src="src/m3.js"></script>
+    <script src="src/twgl-full.min.js"></script>
+    <script src="shaders.js"></script>
+    <script src="figures.js"></script>
+    <script src="utils.js"></script>
+    <script src="drag.js"></script>
+    <script src="test.js"></script>
+</body>
+
+</html>
