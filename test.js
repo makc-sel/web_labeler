@@ -37,6 +37,8 @@ drawRect_btn.addEventListener("click", function () {
 gl.canvas.width = canvas.width;
 gl.canvas.height = canvas.height;
 
+var projectionGL = m3.projection(gl.canvas.width, gl.canvas.height);
+
 gl.enable(gl.BLEND);
 gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
@@ -52,6 +54,7 @@ var camera = {
     y: 0,
     zoom: 0.1
 };
+
 //переделать на dict
 var CLASSES = {};
 
@@ -162,7 +165,7 @@ img.onload = function () {
     requestAnimationFrame(draw);
 };
 
-img.src = "test2.jpg";
+img.src = "test4.jpg";
 
 function drawObject(object) {
     gl.useProgram(object.shaderProgram.program);
@@ -188,8 +191,8 @@ function draw() {
     manipulator.viewProjectionMat = updateViewProjection(gl, camera);
     scene.forEach(drawObject);
     bboxes.forEach(drawRect);
-    x_pos_label.innerText = manipulator.mousePos[0];
-    y_pos_label.innerText = manipulator.mousePos[1];
+    // x_pos_label.innerText = manipulator.mousePos[0];
+    // y_pos_label.innerText = manipulator.mousePos[1];
 
     requestAnimationFrame(draw);
 };

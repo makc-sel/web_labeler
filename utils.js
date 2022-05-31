@@ -8,19 +8,17 @@ function getClipSpaceMousePosition(e) {
 
     let clipX = normalizedX * 2 - 1;
     let clipY = normalizedY * -2 + 1;
+
     return [clipX, clipY];
 };
 
 function makeCameraMatrix(camera) {
     let zoomScale = 1 / camera.zoom;
-    let cameraMat = m3.identity();
-    cameraMat = m3.translate(cameraMat, camera.x, camera.y);
-    cameraMat = m3.scale(cameraMat, zoomScale, zoomScale);
-    return cameraMat;
+    return m3.scale(m3.translate(m3.identity(), camera.x, camera.y), zoomScale, zoomScale);
 };
 
 function updateViewProjection(gl, camera) {
-    return m3.multiply(m3.projection(gl.canvas.width, gl.canvas.height), m3.inverse(makeCameraMatrix(camera)));
+    return m3.multiply(projectionGL, m3.inverse(makeCameraMatrix(camera)))
 };
 
 function appendLabel(label, x1, y1, x2, y2, color) {

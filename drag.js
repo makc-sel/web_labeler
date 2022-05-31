@@ -3,7 +3,6 @@
 class Manipulator {
     constructor(gl, camera) {
         this.startInvViewProjectionMat = 0;
-        this.startCamera = 0;
         this.startPos = 0;
         this.startClipPos = 0;
         this.startMousePos = 0;
@@ -19,16 +18,15 @@ class Manipulator {
         this.selectedRectID = undefined;
 
         this.gl = gl;
-        this.viewProjectionMat = updateViewProjection(gl, camera);
+        this.viewProjectionMat = updateViewProjection(this.gl, camera);
         this.startPoint = [];
     };
 
-    mouse_down(e, camera, shader) {
+    mouse_down(e, shader) {
         // Старт движения камеры
         if (e.button == 1) {
             this.isPanning = true;
             this.startInvViewProjectionMat = m3.inverse(this.viewProjectionMat);
-            this.startCamera = Object.assign({}, camera);
             this.startClipPos = getClipSpaceMousePosition(e);
             this.startPos = m3.transformPoint(this.startInvViewProjectionMat, this.startClipPos);
             this.startMousePos = [e.clientX, e.clientY];
@@ -38,7 +36,6 @@ class Manipulator {
                 case MOUSE_STATES["selector"]:
                     this.isPanning = true;
                     this.startInvViewProjectionMat = m3.inverse(this.viewProjectionMat);
-                    this.startCamera = Object.assign({}, camera);
                     this.startClipPos = getClipSpaceMousePosition(e);
                     this.startPos = m3.transformPoint(this.startInvViewProjectionMat, this.startClipPos);
                     this.startMousePos = [e.clientX, e.clientY];
@@ -75,14 +72,17 @@ class Manipulator {
             m3.inverse(this.viewProjectionMat),
             getClipSpaceMousePosition(e)
         );
+
         // Движение камеры за мышью
         if (this.isPanning) {
             let pos = m3.transformPoint(
                 this.startInvViewProjectionMat,
                 getClipSpaceMousePosition(e)
             );
-            camera.x = this.startCamera.x + this.startPos[0] - pos[0];
-            camera.y = this.startCamera.y + this.startPos[1] - pos[1];
+            camera.x += this.startPos[0] - pos[0];
+            camera.y += this.startPos[1] - pos[1];
+            this.startPos[0] = pos[0];
+            this.startPos[1] = pos[1];
         }
         // растягивание прямоугольника
         else if (this.isDrawing) {
@@ -136,14 +136,12 @@ class Manipulator {
     };
 
     mouse_leave(e) {
-        // move camera
         if (this.isPanning) {
             this.isPanning = false;
         };
     };
 
     mouse_wheel(e, camera) {
-        // move camera
         let [clipX, clipY] = getClipSpaceMousePosition(e);
         let [preZoomX, preZoomY] = m3.transformPoint(
             m3.inverse(this.viewProjectionMat),
@@ -172,13 +170,13 @@ class Manipulator {
                 }
             }
         }
-         else if (e.key == "r") {
+        else if (e.key == "r") {
             camera = {
                 x: 0,
                 y: 0,
                 zoom: 0.1
             };
-         }
+        }
     };
 
 };
