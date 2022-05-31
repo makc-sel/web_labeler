@@ -5,7 +5,6 @@ class Manipulator {
         this.startInvViewProjectionMat = 0;
         this.startPos = 0;
         this.startClipPos = 0;
-        this.startMousePos = 0;
         this.isPanning = false;
         this.isDrawing = false;
         this.mousePos = [0, 0];
@@ -29,7 +28,6 @@ class Manipulator {
             this.startInvViewProjectionMat = m3.inverse(this.viewProjectionMat);
             this.startClipPos = getClipSpaceMousePosition(e);
             this.startPos = m3.transformPoint(this.startInvViewProjectionMat, this.startClipPos);
-            this.startMousePos = [e.clientX, e.clientY];
         }
         else if (e.button == 0) {
             switch (mouse_state) {
@@ -38,7 +36,6 @@ class Manipulator {
                     this.startInvViewProjectionMat = m3.inverse(this.viewProjectionMat);
                     this.startClipPos = getClipSpaceMousePosition(e);
                     this.startPos = m3.transformPoint(this.startInvViewProjectionMat, this.startClipPos);
-                    this.startMousePos = [e.clientX, e.clientY];
                     break;
                 case MOUSE_STATES["drawRect"]:
                     this.isDrawing = true;
