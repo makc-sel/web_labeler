@@ -10,7 +10,6 @@ class Manipulator {
         this.isPanning = false;
         this.isDrawing = false;
         this.mousePos = [0, 0];
-        this.isSelected = false;
 
         this.isDragRectVertex = false;
         this.isDragRect = false;
@@ -35,34 +34,38 @@ class Manipulator {
             this.startMousePos = [e.clientX, e.clientY];
         }
         else if (e.button == 0) {
-            if (mouse_state == MOUSE_STATES["selector"]) {
-                this.isPanning = true;
-                this.startInvViewProjectionMat = m3.inverse(this.viewProjectionMat);
-                this.startCamera = Object.assign({}, camera);
-                this.startClipPos = getClipSpaceMousePosition(e);
-                this.startPos = m3.transformPoint(this.startInvViewProjectionMat, this.startClipPos);
-                this.startMousePos = [e.clientX, e.clientY];
-            }
-            else if (e.button == 0 && mouse_state == MOUSE_STATES["drawRect"]) {
-                this.isDrawing = true;
-                this.startPoint = this.mousePos;
-                this.endPoint = this.mousePos;
-                bboxes.push(new Rectangle(
-                    this.gl,
-                    this.startPoint[0],
-                    this.startPoint[1],
-                    this.endPoint[0],
-                    this.endPoint[1],
-                    shader
-                ));
-            }
-            else if (e.button == 0 && mouse_state == MOUSE_STATES["edit"]) {
-                if (this.inRectVertex) {
-                    this.isDragRectVertex = true;
-                } else if (this.inRect) {
-                    this.isDragRect = true;
-                    this.startDragRect = this.mousePos;
-                }
+            switch (mouse_state) {
+                case MOUSE_STATES["selector"]:
+                    this.isPanning = true;
+                    this.startInvViewProjectionMat = m3.inverse(this.viewProjectionMat);
+                    this.startCamera = Object.assign({}, camera);
+                    this.startClipPos = getClipSpaceMousePosition(e);
+                    this.startPos = m3.transformPoint(this.startInvViewProjectionMat, this.startClipPos);
+                    this.startMousePos = [e.clientX, e.clientY];
+                    break;
+                case MOUSE_STATES["drawRect"]:
+                    this.isDrawing = true;
+                    this.startPoint = this.mousePos;
+                    this.endPoint = this.mousePos;
+                    bboxes.push(new Rectangle(
+                        this.gl,
+                        this.startPoint[0],
+                        this.startPoint[1],
+                        this.endPoint[0],
+                        this.endPoint[1],
+                        shader
+                    ));
+                    break;
+                case MOUSE_STATES["edit"]:
+                    if (this.inRectVertex) {
+                        this.isDragRectVertex = true;
+                    } else if (this.inRect) {
+                        this.isDragRect = true;
+                        this.startDragRect = this.mousePos;
+                    };
+                    break;
+                default:
+                    break;
             }
         };
     };
@@ -116,8 +119,6 @@ class Manipulator {
                     }
                 }
             }
-
-
         }
     };
 
@@ -171,6 +172,13 @@ class Manipulator {
                 }
             }
         }
+         else if (e.key == "r") {
+            camera = {
+                x: 0,
+                y: 0,
+                zoom: 0.1
+            };
+         }
     };
 
 };

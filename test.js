@@ -6,16 +6,17 @@ const
     table = document.getElementById("labels"),
     selector_btn = document.getElementById("selector"),
     edit_btn = document.getElementById("edit"),
-    drawRect_btn = document.getElementById("drawRect");
+    drawRect_btn = document.getElementById("drawRect"),
+    MOUSE_STATES = {
+        "selector": 0,
+        "edit": 1,
+        "drawRect": 2
+    },
+    TILE_SIZE = 512;
 
 canvas.width = 1280;
 canvas.height = 720;
 
-const MOUSE_STATES = {
-    "selector": 0,
-    "edit": 1,
-    "drawRect": 2
-}
 var mouse_state = MOUSE_STATES["selector"];
 
 selector_btn.addEventListener("click", function () {
@@ -123,15 +124,14 @@ discard_label_button.addEventListener("click", function (e) {
 var manipulator = new Manipulator(gl, camera);
 
 var img = new Image();
-
 img.onload = function () {
     let ctx = document.createElement("canvas").getContext("2d");
     ctx.canvas.width = img.width;
     ctx.canvas.height = img.height;
     ctx.drawImage(img, 0, 0);
-    for (let i = 0; i < img.width / 256; i++) {
-        for (let j = 0; j < img.height / 256; j++) {
-            scene.push(getTileFromImage(gl, ctx, 256, 256, i * 256, j * 256, i * 256, j * 256, shaderProgramTile));
+    for (let i = 0; i < img.width / TILE_SIZE; i++) {
+        for (let j = 0; j < img.height / TILE_SIZE; j++) {
+            scene.push(getTileFromImage(gl, ctx, TILE_SIZE, TILE_SIZE, i * TILE_SIZE, j * TILE_SIZE, i * TILE_SIZE, j * TILE_SIZE, shaderProgramTile));
         };
     };
 
@@ -162,7 +162,7 @@ img.onload = function () {
     requestAnimationFrame(draw);
 };
 
-img.src = "test4.jpg";
+img.src = "test2.jpg";
 
 function drawObject(object) {
     gl.useProgram(object.shaderProgram.program);
@@ -183,7 +183,7 @@ function drawRect(object) {
 
 function draw() {
     gl.clearColor(102 / 255, 102 / 255, 102 / 255, 1);
-    gl.clear(gl.COLOR_BUFFER_BIT, gl.DEPTH_BUFFER_BIT);
+    gl.clear(gl.COLOR_BUFFER_BIT);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     manipulator.viewProjectionMat = updateViewProjection(gl, camera);
     scene.forEach(drawObject);
@@ -193,4 +193,3 @@ function draw() {
 
     requestAnimationFrame(draw);
 };
-
