@@ -7,6 +7,10 @@ const
     selector_btn = document.getElementById("selector"),
     edit_btn = document.getElementById("edit"),
     drawRect_btn = document.getElementById("drawRect"),
+    rect_x_label = document.getElementById("x"),
+    rect_y_label = document.getElementById("y"),
+    rect_w_label = document.getElementById("w"),
+    rect_h_label = document.getElementById("h"),
     MOUSE_STATES = {
         "selector": 0,
         "edit": 1,
@@ -139,7 +143,7 @@ img.onload = function () {
     };
 
     canvas.addEventListener("mousedown", function (e) {
-        manipulator.mouse_down(e, camera, shaderProgramBox)
+        manipulator.mouse_down(e, shaderProgramBox)
     });
 
     canvas.addEventListener("mousewheel", function (e) {
@@ -151,7 +155,7 @@ img.onload = function () {
     });
 
     canvas.addEventListener("mouseup", function (e) {
-        manipulator.mouse_up(e, table)
+        manipulator.mouse_up(e)
     });
 
     canvas.addEventListener("mouseleave", function (e) {
@@ -182,17 +186,25 @@ function drawRect(object) {
         u_image: object.isSelected ? object.hoverTexture : object.texture,
         u_matrix: manipulator.viewProjectionMat
     });
+    if (object.isSelected){
+        rect_x_label.innerText = object.x;
+        rect_y_label.innerText = object.y;
+        rect_w_label.innerText = object.w;
+        rect_h_label.innerText = object.h;
+    }
 };
 
 function draw() {
-    gl.clearColor(102 / 255, 102 / 255, 102 / 255, 1);
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.clearColor(125 / 255, 125 / 255, 125 / 255, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT, gl.DEPTH_BUFFER_BIT);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    manipulator.viewProjectionMat = updateViewProjection(gl, camera);
+    manipulator.viewProjectionMat = updateViewProjection(camera);
+    
     scene.forEach(drawObject);
     bboxes.forEach(drawRect);
-    // x_pos_label.innerText = manipulator.mousePos[0];
-    // y_pos_label.innerText = manipulator.mousePos[1];
+    
+    x_pos_label.innerText = manipulator.mousePos[0].toFixed(3);
+    y_pos_label.innerText = manipulator.mousePos[1].toFixed(3);
 
     requestAnimationFrame(draw);
 };

@@ -5,19 +5,20 @@ class Manipulator {
         this.startInvViewProjectionMat = 0;
         this.startPos = 0;
         this.startClipPos = 0;
-        this.isPanning = false;
-        this.isDrawing = false;
         this.mousePos = [0, 0];
 
         this.isDragRectVertex = false;
         this.isDragRect = false;
         this.inRect = false;
         this.inRectVertex = false;
+        this.isPanning = false;
+        this.isDrawing = false;
+
         this.startDragRect = [];
         this.selectedRectID = undefined;
 
         this.gl = gl;
-        this.viewProjectionMat = updateViewProjection(this.gl, camera);
+        this.viewProjectionMat = updateViewProjection(camera);
         this.startPoint = [];
     };
 
@@ -149,7 +150,7 @@ class Manipulator {
         } else {
             camera.zoom = camera.zoom / 1.1;
         }
-        this.viewProjectionMat = updateViewProjection(this.gl, camera);
+        this.viewProjectionMat = updateViewProjection(camera);
         let [postZoomX, postZoomY] = m3.transformPoint(
             m3.inverse(this.viewProjectionMat),
             [clipX, clipY]
@@ -159,20 +160,24 @@ class Manipulator {
     };
 
     key_down(e) {
-        if (e.key == "Delete") {
-            for (let i = 0; i < bboxes.length; i++) {
-                if (bboxes[i].isSelected) {
-                    bboxes.splice(i, 1);
-                    break;
-                }
-            }
-        }
-        else if (e.key == "r") {
-            camera = {
-                x: 0,
-                y: 0,
-                zoom: 0.1
-            };
+        switch (e.key) {
+            case "Delete":
+                for (let i = 0; i < bboxes.length; i++) {
+                    if (bboxes[i].isSelected) {
+                        bboxes.splice(i, 1);
+                        break;
+                    };
+                };
+                break;
+            case "r":
+                camera = {
+                    x: 0,
+                    y: 0,
+                    zoom: 0.1
+                };
+                break;
+            default:
+                break;
         }
     };
 

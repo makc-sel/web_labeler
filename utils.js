@@ -17,7 +17,7 @@ function makeCameraMatrix(camera) {
     return m3.scale(m3.translate(m3.identity(), camera.x, camera.y), zoomScale, zoomScale);
 };
 
-function updateViewProjection(gl, camera) {
+function updateViewProjection(camera) {
     return m3.multiply(projectionGL, m3.inverse(makeCameraMatrix(camera)))
 };
 

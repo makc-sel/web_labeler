@@ -82,6 +82,11 @@
             width: 80%;
             /* Could be more or less, depending on screen size */
         }
+
+        label {
+            border: 1px solid black;
+            display: inline-block;
+        }
     </style>
     <title>Labeler</title>
 </head>
@@ -128,6 +133,10 @@
     <div>
         <label id="x_pos"></label>
         <label id="y_pos"></label>
+        <label id="x"></label>
+        <label id="y"></label>
+        <label id="w"></label>
+        <label id="h"></label>
     </div>
     <script src="src/m3.js"></script>
     <script src="src/twgl-full.min.js"></script>
