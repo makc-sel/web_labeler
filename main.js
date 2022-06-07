@@ -3,10 +3,12 @@ const
     gl = canvas.getContext("webgl2"),
     x_pos_label = document.getElementById("x_pos"),
     y_pos_label = document.getElementById("y_pos"),
+    table_orig = document.getElementById("table"),
     table = document.getElementById("labels"),
     selector_btn = document.getElementById("selector"),
     edit_btn = document.getElementById("edit"),
     drawRect_btn = document.getElementById("drawRect"),
+    saveLabels_btn = document.getElementById("saveLabels"),
     rect_x_label = document.getElementById("x"),
     rect_y_label = document.getElementById("y"),
     rect_w_label = document.getElementById("w"),
@@ -25,18 +27,49 @@ var mouse_state = MOUSE_STATES["selector"];
 
 selector_btn.addEventListener("click", function () {
     mouse_state = MOUSE_STATES["selector"];
-    console.log('selector');
 });
 
 edit_btn.addEventListener("click", function () {
     mouse_state = MOUSE_STATES["edit"];
-    console.log('edit');
 });
 
 drawRect_btn.addEventListener("click", function () {
     mouse_state = MOUSE_STATES["drawRect"];
-    console.log('drawRect');
 });
+
+saveLabels_btn.addEventListener("click", function () {
+    data = ""
+    let rowsLengt = table_orig.rows.length;
+    for (let i = 0; i < rowsLengt; i++) {
+        let cells = table_orig.rows.item(i).cells;
+        let cellsLength = cells.length;
+        for (let j = 0; j < cellsLength; j++) {
+            data += cells.item(j).innerText;
+            if (j !== cellsLength - 1) {
+                data += ",";
+            }
+        }
+        data += "\n";
+    }
+    let filename = 'labels.csv';
+
+    let file = new Blob([data], { type: "text/plain;charset=utf-8" });
+    if (window.navigator.msSaveOrOpenBlob) // IE10+
+        window.navigator.msSaveOrOpenBlob(file, filename);
+    else {
+        var a = document.createElement("a"),
+            url = URL.createObjectURL(file);
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 0);
+    }
+
+})
 
 gl.canvas.width = canvas.width;
 gl.canvas.height = canvas.height;
@@ -143,19 +176,19 @@ img.onload = function () {
     };
 
     canvas.addEventListener("mousedown", function (e) {
-        manipulator.mouse_down(e, shaderProgramBox)
+        manipulator.mouse_down(e, shaderProgramBox);
     });
 
     canvas.addEventListener("mousewheel", function (e) {
-        manipulator.mouse_wheel(e, camera)
+        manipulator.mouse_wheel(e, camera);
     });
 
     canvas.addEventListener("mousemove", function (e) {
-        manipulator.mouse_move(e, camera)
+        manipulator.mouse_move(e, camera);
     });
 
     canvas.addEventListener("mouseup", function (e) {
-        manipulator.mouse_up(e)
+        manipulator.mouse_up(e);
     });
 
     canvas.addEventListener("mouseleave", function (e) {
@@ -186,7 +219,7 @@ function drawRect(object) {
         u_image: object.isSelected ? object.hoverTexture : object.texture,
         u_matrix: manipulator.viewProjectionMat
     });
-    if (object.isSelected){
+    if (object.isSelected) {
         rect_x_label.innerText = object.x;
         rect_y_label.innerText = object.y;
         rect_w_label.innerText = object.w;
@@ -199,10 +232,10 @@ function draw() {
     gl.clear(gl.COLOR_BUFFER_BIT, gl.DEPTH_BUFFER_BIT);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     manipulator.viewProjectionMat = updateViewProjection(camera);
-    
+
     scene.forEach(drawObject);
     bboxes.forEach(drawRect);
-    
+
     x_pos_label.innerText = manipulator.mousePos[0].toFixed(3);
     y_pos_label.innerText = manipulator.mousePos[1].toFixed(3);
 

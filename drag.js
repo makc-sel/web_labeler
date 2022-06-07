@@ -146,9 +146,9 @@ class Manipulator {
             [clipX, clipY]
         );
         if (e.deltaY > 0) {
-            camera.zoom = camera.zoom * 1.1;
-        } else {
             camera.zoom = camera.zoom / 1.1;
+        } else {
+            camera.zoom = camera.zoom * 1.1;
         }
         this.viewProjectionMat = updateViewProjection(camera);
         let [postZoomX, postZoomY] = m3.transformPoint(
