@@ -70,7 +70,7 @@ class Manipulator {
             m3.inverse(this.viewProjectionMat),
             getClipSpaceMousePosition(e)
         );
-
+        console.log(canvas.width/camera.zoom,canvas.height/camera.zoom);
         // Движение камеры за мышью
         if (this.isPanning) {
             let pos = m3.transformPoint(
@@ -146,9 +146,9 @@ class Manipulator {
             [clipX, clipY]
         );
         if (e.deltaY > 0) {
-            camera.zoom = camera.zoom / 1.1;
+            camera.zoom = camera.zoom / 1.05;
         } else {
-            camera.zoom = camera.zoom * 1.1;
+            camera.zoom = camera.zoom * 1.05;
         }
         this.viewProjectionMat = updateViewProjection(camera);
         let [postZoomX, postZoomY] = m3.transformPoint(

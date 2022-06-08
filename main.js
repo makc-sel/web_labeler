@@ -89,7 +89,7 @@ var selected = 0;
 var camera = {
     x: 0,
     y: 0,
-    zoom: 0.1
+    zoom: 1
 };
 
 //переделать на dict
@@ -174,7 +174,11 @@ img.onload = function () {
             scene.push(getTileFromImage(gl, ctx, TILE_SIZE, TILE_SIZE, i * TILE_SIZE, j * TILE_SIZE, i * TILE_SIZE, j * TILE_SIZE, shaderProgramTile));
         };
     };
-
+    if ((canvas.width * img.height) > (img.width * canvas.height)){
+        camera.zoom = canvas.height/img.height;
+    } else {
+        camera.zoom = canvas.width/img.width;
+    }
     canvas.addEventListener("mousedown", function (e) {
         manipulator.mouse_down(e, shaderProgramBox);
     });
