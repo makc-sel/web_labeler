@@ -9,6 +9,7 @@ const
     edit_btn = document.getElementById("edit"),
     drawRect_btn = document.getElementById("drawRect"),
     saveLabels_btn = document.getElementById("saveLabels"),
+    resetCamera_btn = document.getElementById("resetCamera"),
     rect_x_label = document.getElementById("x"),
     rect_y_label = document.getElementById("y"),
     rect_w_label = document.getElementById("w"),
@@ -24,52 +25,6 @@ canvas.width = 1280;
 canvas.height = 720;
 
 var mouse_state = MOUSE_STATES["selector"];
-
-selector_btn.addEventListener("click", function () {
-    mouse_state = MOUSE_STATES["selector"];
-});
-
-edit_btn.addEventListener("click", function () {
-    mouse_state = MOUSE_STATES["edit"];
-});
-
-drawRect_btn.addEventListener("click", function () {
-    mouse_state = MOUSE_STATES["drawRect"];
-});
-
-saveLabels_btn.addEventListener("click", function () {
-    data = ""
-    let rowsLengt = table_orig.rows.length;
-    for (let i = 0; i < rowsLengt; i++) {
-        let cells = table_orig.rows.item(i).cells;
-        let cellsLength = cells.length;
-        for (let j = 0; j < cellsLength; j++) {
-            data += cells.item(j).innerText;
-            if (j !== cellsLength - 1) {
-                data += ",";
-            }
-        }
-        data += "\n";
-    }
-    let filename = 'labels.csv';
-
-    let file = new Blob([data], { type: "text/plain;charset=utf-8" });
-    if (window.navigator.msSaveOrOpenBlob) // IE10+
-        window.navigator.msSaveOrOpenBlob(file, filename);
-    else {
-        var a = document.createElement("a"),
-            url = URL.createObjectURL(file);
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function () {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        }, 0);
-    }
-
-})
 
 gl.canvas.width = canvas.width;
 gl.canvas.height = canvas.height;
@@ -159,6 +114,68 @@ discard_label_button.addEventListener("click", function (e) {
     bboxes.pop();
     modal.style.display = "none";
 });
+
+selector_btn.addEventListener("click", function () {
+    mouse_state = MOUSE_STATES["selector"];
+});
+
+edit_btn.addEventListener("click", function () {
+    mouse_state = MOUSE_STATES["edit"];
+});
+
+drawRect_btn.addEventListener("click", function () {
+    mouse_state = MOUSE_STATES["drawRect"];
+});
+
+saveLabels_btn.addEventListener("click", function () {
+    data = ""
+    let rowsLengt = table_orig.rows.length;
+    for (let i = 0; i < rowsLengt; i++) {
+        let cells = table_orig.rows.item(i).cells;
+        let cellsLength = cells.length;
+        for (let j = 0; j < cellsLength; j++) {
+            data += cells.item(j).innerText;
+            if (j !== cellsLength - 1) {
+                data += ",";
+            }
+        }
+        data += "\n";
+    }
+    let filename = 'labels.csv';
+
+    let file = new Blob([data], { type: "text/plain;charset=utf-8" });
+    if (window.navigator.msSaveOrOpenBlob) // IE10+
+        window.navigator.msSaveOrOpenBlob(file, filename);
+    else {
+        var a = document.createElement("a"),
+            url = URL.createObjectURL(file);
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 0);
+    }
+
+})
+
+resetCamera_btn.addEventListener("click", function () {
+    if (typeof (default_zoom) !== "undefined") {
+        camera = {
+            x: 0,
+            y: 0,
+            zoom: default_zoom
+        };
+    } else {
+        camera = {
+            x: 0,
+            y: 0,
+            zoom: 1
+        };
+    }
+})
 
 var default_zoom = 1;
 var manipulator = new Manipulator(gl, camera);

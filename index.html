@@ -22,8 +22,8 @@
         }
 
         .btn {
-            background-color: #0d6efd;
-            border-color: #0d6efd;
+            background-color: #111;
+            border-color: #111;
 
             font-size: 1rem;
             font-weight: 400;
@@ -45,8 +45,8 @@
         }
 
         .btn:hover {
-            background-color: #0b5ed7;
-            border-color: #0a58ca;
+            background-color: #333;
+            border-color: #333;
         }
 
         .btn-cancel {
@@ -81,8 +81,17 @@
         #content {
             position: relative;
             display: flex;
+            /* justify-content: center; */
+            /* align-items: center; */
+            vertical-align: top;
+        }
+
+        .content {
+            position: relative;
+            /* display: flex; */
             justify-content: center;
             align-items: center;
+            vertical-align: top;
         }
 
         #canvas {
@@ -94,6 +103,8 @@
         .table {
             width: 100%;
             margin-bottom: 1rem;
+            font-size: 1rem;
+            font-weight: 400;
             color: #fff;
             vertical-align: top;
             border-color: #dee2e6;
@@ -162,8 +173,9 @@
     <header>
         <button class="btn" id="selector">Навигация</button>
         <button class="btn" id="edit">Редактировать</button>
-        <button class="btn" id="drawRect">Прямоугольник</button>
+        <button class="btn" id="drawRect">Контур</button>
         <button class="btn" id="saveLabels">Сохранить</button>
+        <button class="btn" id="resetCamera">Сброс камеры</button>
     </header>
     <div id="myModal" class="modal" tabindex="-1">
         <div class="modal-content">
@@ -188,21 +200,24 @@
     </div>
     <div id="content">
         <canvas id="canvas" tabindex='1'></canvas>
-        <table class="table" id="table">
-            <thead>
-                <tr>
-                    <th>label</th>
-                    <th>x1</th>
-                    <th>y1</th>
-                    <th>w</th>
-                    <th>h</th>
-                    <th>color</th>
-                </tr>
-            </thead>
-            <tbody id="labels">
+        <div class="content">
+            <h5>Размеченные данные</h5>
+            <table class="table" id="table">
+                <thead>
+                    <tr>
+                        <th>label</th>
+                        <th>x1</th>
+                        <th>y1</th>
+                        <th>w</th>
+                        <th>h</th>
+                        <th>color</th>
+                    </tr>
+                </thead>
+                <tbody id="labels">
 
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
     <footer>
         <label id="x_pos"></label>
