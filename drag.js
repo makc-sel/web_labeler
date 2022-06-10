@@ -173,7 +173,7 @@ class Manipulator {
                 camera = {
                     x: 0,
                     y: 0,
-                    zoom: 0.1
+                    zoom: default_zoom
                 };
                 break;
             default:

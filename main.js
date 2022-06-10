@@ -160,10 +160,11 @@ discard_label_button.addEventListener("click", function (e) {
     modal.style.display = "none";
 });
 
-
+var default_zoom = 1;
 var manipulator = new Manipulator(gl, camera);
 
 var img = new Image();
+img.setAttribute('crossorigin', 'anonymous');
 img.onload = function () {
     let ctx = document.createElement("canvas").getContext("2d");
     ctx.canvas.width = img.width;
@@ -174,11 +175,14 @@ img.onload = function () {
             scene.push(getTileFromImage(gl, ctx, TILE_SIZE, TILE_SIZE, i * TILE_SIZE, j * TILE_SIZE, i * TILE_SIZE, j * TILE_SIZE, shaderProgramTile));
         };
     };
-    if ((canvas.width * img.height) > (img.width * canvas.height)){
-        camera.zoom = canvas.height/img.height;
+    //fit image
+    if ((canvas.width * img.height) > (img.width * canvas.height)) {
+        default_zoom = canvas.height / img.height;
     } else {
-        camera.zoom = canvas.width/img.width;
-    }
+        default_zoom = canvas.width / img.width;
+    };
+    camera.zoom = default_zoom;
+
     canvas.addEventListener("mousedown", function (e) {
         manipulator.mouse_down(e, shaderProgramBox);
     });
@@ -206,7 +210,7 @@ img.onload = function () {
     requestAnimationFrame(draw);
 };
 
-img.src = "test4.jpg";
+img.src = "test.jpg";
 
 function drawObject(object) {
     gl.useProgram(object.shaderProgram.program);
